@@ -2,6 +2,7 @@
 #include <Servo.h>
 #include <PID_v1.h>
 #include <Pixy2.h>
+#include <Wire.h>
 
 #define MIN_SERVO_X 50
 #define MAX_SERVO_X 160
@@ -49,6 +50,20 @@ void setY(int pos)
 uint16_t fWidth;
 uint16_t fHeight;
 
+double trueMap(double val, double valHigh, double valLow, double newHigh, double newLow)
+{
+	double midVal = ((valHigh - valLow) / 2) + valLow;
+	double newMidVal = ((newHigh - newLow) / 2) + newLow;
+	double ratio = (newHigh - newLow) / (valHigh - valLow);
+	return (((val - midVal) * ratio) + newMidVal);
+}
+
+uint8_t sentData[1];
+
+void requestEvent() {
+  Wire.write(sentData[0]);
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -69,6 +84,8 @@ void setup()
   pidSetpoint = 0;
   myPID.SetMode(AUTOMATIC);
   myPID.SetOutputLimits(-158, 158);
+  Wire.begin(0x54);
+  Wire.onRequest(requestEvent());
 }
 
 int panOffset;
@@ -105,4 +122,5 @@ void loop()
   {
     setX(50);
   }
+  sentData[0] = trueMap((158 - pixy.ccc.blocks[0].m_x), 158, -158, 100, 0);
 }
