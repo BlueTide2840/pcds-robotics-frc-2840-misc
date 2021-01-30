@@ -105,14 +105,14 @@ void loop()
   currentTime = millis();
   elapsedTime = currentTime - previousTime;
   pixy.ccc.getBlocks();
-  float distance = 0;
+  //float distance = 0;
   if (pixy.ccc.numBlocks)
   {
 
     int x = (158 - pixy.ccc.blocks[0].m_x);
     int y = (104 - pixy.ccc.blocks[0].m_y);
     Serial.println(String(x) + ", " + String(y));
-    int center = FRAME_WIDTH / 2;
+    //int center = FRAME_WIDTH / 2;
     pidInput = x;
     myPID.Compute();
     //Serial.println(pidOutput);
